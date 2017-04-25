@@ -1,0 +1,14 @@
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+ext {
+	gemEngineVersion = '5de1dfd22e'
+    }
+
+    dependencies {
+    compile "com.github.Ughuuu:GemMaker:$gemEngineVersion"
+    }
