@@ -1,3 +1,4 @@
+package engine;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,26 +9,41 @@ import com.gemengine.system.base.TimedSystem;
 import com.gemengine.system.manager.SystemManager;
 import com.google.inject.Inject;
 
+import lombok.val;
+
 public class ComponentSystem extends TimedSystem {
 	private int _id = 0;
 	private final Map<String, Map<Integer, Component>> componentsByType = new HashMap<String, Map<Integer, Component>>();
 	private final Map<Integer, String> idToType = new HashMap<Integer, String>();
 	private final SystemManager systemManager;
-
+	//private final Map<String, ComponentUpdater> systemToComponentUpdater = new HashMap<String, ComponentUpdater>();
+	//private final Map<Set<String>, List<Integer>> = new
 	@Inject
-	public ComponentSystem(SystemManager systemManager) {
+	public ComponentSystem(SystemManager systemManager, EntitySystem entitySystem) {
 		super(16, true, 3);
 		this.systemManager = systemManager;
+	}
+	
+	@Override
+	public void onInit(){
+		System.out.println("start");
+	}
+	
+	@Override
+	public void onUpdate(float delta){
+		System.out.println("22");
+		//for(val system : systemToComponentUpdater.entrySet()){
+			
+		//}
 	}
 	
 	//public  getComponents(Class<?> type){
 	//	return componentsByType.get(type.getName()).keySet();
 	//}
 	
-	@Override
-	public void onUpdate(float delta){
-		System.out.println("a");
-	}
+	//public void addComponentListener(ComponentUpdater componentListener){
+	//	systemToComponentUpdater.put(componentListener.getClass().getName(), componentListener);
+	//}
 
 	public <T extends Component> T add(Class<T> type) {
 		String typeName = type.getName();

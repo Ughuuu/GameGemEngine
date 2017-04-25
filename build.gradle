@@ -7,8 +7,10 @@ repositories {
 
 ext {
 	gemEngineVersion = '5de1dfd22e'
+     lombokVersion = "1.16.16"
     }
 
     dependencies {
-    compile "com.github.Ughuuu:GemMaker:$gemEngineVersion"
+    	compile "com.github.Ughuuu:GemMaker:$gemEngineVersion"
+    	compileOnly "org.projectlombok:lombok:$lombokVersion"
     }
