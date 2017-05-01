@@ -1,5 +1,5 @@
 package engine;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +9,10 @@ import com.gemengine.system.base.SystemBase;
 import com.google.inject.Inject;
 
 public class EntitySystem extends SystemBase {
-	private int _id = 0;
 	private final Map<Integer, Entity> entities = new HashMap<Integer, Entity>();
 	private final Map<String, Integer> entityNameToId = new HashMap<String, Integer>();
-	private final Map<Integer, List<Integer>> entityToComponent = new HashMap<Integer, List<Integer>>();
+	private final Map<Integer, Integer> entityToParent = new HashMap<Integer, Integer>();
+	private final Map<Integer, List<Integer>> entityToChildren = new HashMap<Integer, List<Integer>>();
 	private final ComponentSystem componentSystem;
 
 	@Inject
@@ -21,26 +21,34 @@ public class EntitySystem extends SystemBase {
 		this.componentSystem = componentSystem;
 	}
 
-	public Entity add(String name) {
+	public Entity create(String name) {
 		if (entityNameToId.get(name) != null) {
 			return null;
 		}
-		Entity ent = new Entity(_id, name);
+		Entity ent = new Entity(name);
 		entityNameToId.put(name, ent.getId());
-		entities.put(_id++, ent);
+		entities.put(ent.getId(), ent);
 		return ent;
 	}
 
-	public Entity get(String name) {
+	public Entity find(int id) {
+		return entities.get(id);
+	}
+
+	public Entity find(String name) {
 		Integer id = entityNameToId.get(name);
 		if (id == null) {
 			return null;
 		}
-		return get(id);
+		return find(id);
 	}
 
-	public Entity get(int id) {
-		return entities.get(id);
+	public void remove(int id) {
+		Entity ent = entities.remove(id);
+		if (ent == null) {
+			return;
+		}
+		entityNameToId.remove(ent.getName());
 	}
 
 	public void remove(String name) {
@@ -49,19 +57,17 @@ public class EntitySystem extends SystemBase {
 			return;
 		}
 		entities.remove(id);
-		for (int componentId : entityToComponent.get(id)) {
-			componentSystem.remove(componentId);
-		}
 	}
-
-	public void remove(Integer id) {
-		Entity ent = entities.remove(id);
-		if (ent == null) {
-			return;
-		}
-		entityNameToId.remove(ent.getName());
-		for (int componentId : entityToComponent.get(id)) {
-			componentSystem.remove(componentId);
-		}
+	
+	public void remove(Entity ent){
+		remove(ent.getId());
+	}
+	
+	public void addChild(Entity parent, Entity child){
+		entityToParent.put(child.getId(), parent.getId());
+	}
+	
+	public void removeChild(){
+		
 	}
 }

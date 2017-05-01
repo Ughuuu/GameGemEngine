@@ -1,17 +1,42 @@
 package engine;
 
-import com.gemengine.system.base.SystemBase;
-import com.gemengine.system.base.TimedSystem;
+import com.gemengine.entity.Entity;
+import com.google.inject.Inject;
 
-public class TestSystem extends TimedSystem{
+import engine.base.ComponentUpdaterSystem;
+import engine.component.DragosScript;
+import engine.component.Position;
+import lombok.val;
 
-	@Override
-	public void onInit(){
-		System.out.println("start");
+public class TestSystem extends ComponentUpdaterSystem {
+	private EntitySystem e;
+	private ComponentSystem c;
+
+	@Inject
+	public TestSystem(EntitySystem entitySystem, ComponentSystem componentSystem) {
+		super(createConfiguration(Position.class), true, 5);
+		this.e = entitySystem;
+		this.c = componentSystem;
+		doTest();
 	}
 
 	@Override
-	public void onUpdate(float delta){
-		System.out.println("1");
+	public void onBeforeEntities() {
+		// System.out.println("b");
+	}
+
+	@Override
+	public void onInit() {
+	}
+	
+	@Override
+	public void onNext(Entity ent) {
+		//System.out.println(ent.getName());
+	}
+
+	void doTest() {
+		c.addComponentListener(this);
+		val ent = e.create("Dragos");
+		c.create(ent, DragosScript.class);
 	}
 }
