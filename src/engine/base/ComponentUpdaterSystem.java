@@ -7,6 +7,7 @@ import com.gemengine.component.Component;
 import com.gemengine.entity.Entity;
 import com.gemengine.system.base.SystemBase;
 
+import engine.ComponentSystem;
 import lombok.Getter;
 
 public abstract class ComponentUpdaterSystem extends SystemBase {
@@ -21,13 +22,14 @@ public abstract class ComponentUpdaterSystem extends SystemBase {
 	@Getter
 	private final Set<String> configuration;
 
-	protected ComponentUpdaterSystem() {
-		this.configuration = new HashSet<String>();
+	protected ComponentUpdaterSystem(ComponentSystem componentSystem) {
+		this(componentSystem, new HashSet<String>(), true, Integer.MAX_VALUE);
 	}
 
-	protected ComponentUpdaterSystem(Set<String> configuration, boolean enable, int priority) {
+	protected ComponentUpdaterSystem(ComponentSystem componentSystem, Set<String> configuration, boolean enable, int priority) {
 		super(enable, priority);
 		this.configuration = configuration;
+		componentSystem.addComponentListener(this);
 	}
 
 	public void onAfterEntities() {

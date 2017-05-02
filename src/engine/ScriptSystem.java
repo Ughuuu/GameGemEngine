@@ -10,8 +10,9 @@ import engine.component.Script;
 
 public class ScriptSystem extends ComponentUpdaterSystem{
 
-	public ScriptSystem() {
-		super(createConfiguration(Script.class), true, 5);
+	@Inject
+	public ScriptSystem(ComponentSystem componentSystem) {
+		super(componentSystem, createConfiguration(Script.class), true, 5);
 	}
 	
 	@Override

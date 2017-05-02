@@ -1,5 +1,6 @@
 package engine;
 
+
 import com.gemengine.entity.Entity;
 import com.google.inject.Inject;
 
@@ -14,7 +15,8 @@ public class TestSystem extends ComponentUpdaterSystem {
 
 	@Inject
 	public TestSystem(EntitySystem entitySystem, ComponentSystem componentSystem) {
-		super(createConfiguration(Position.class), true, 5);
+		super(componentSystem);
+		//super(createConfiguration(Position.class), true, 5);
 		this.e = entitySystem;
 		this.c = componentSystem;
 		doTest();
@@ -31,11 +33,10 @@ public class TestSystem extends ComponentUpdaterSystem {
 	
 	@Override
 	public void onNext(Entity ent) {
-		//System.out.println(ent.getName());
+		System.out.println(ent.getName());
 	}
 
 	void doTest() {
-		c.addComponentListener(this);
 		val ent = e.create("Dragos");
 		c.create(ent, DragosScript.class);
 	}
