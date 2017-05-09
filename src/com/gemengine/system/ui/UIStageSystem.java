@@ -52,15 +52,6 @@ public class UIStageSystem extends ConstructorSystem<Stage, UIStageComponent>
 	}
 
 	@Override
-	public void onFound(ComponentTrackerSystem<UIStageComponent, UIWidgetComponent> issuingSystem,
-			UIStageComponent notifier, Entity tracker) {
-	}
-
-	@Override
-	public void onLost(ComponentTrackerSystem<UIStageComponent, UIWidgetComponent> issuingSystem, Entity tracker) {
-	}
-
-	@Override
 	public void onFound(ComponentTrackerSystem<CameraComponent, DrawableComponent> issuingSystem,
 			CameraComponent notifier, Entity tracker) {
 		UIStageComponent uiStageComponent = tracker.getComponent(UIStageComponent.class);

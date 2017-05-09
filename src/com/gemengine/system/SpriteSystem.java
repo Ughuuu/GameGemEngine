@@ -47,7 +47,6 @@ public class SpriteSystem extends ComponentUpdaterSystem implements ComponentLis
 	public void onBeforeEntities() {
 		spriteBatch.begin();
 		spriteBatch.setTransformMatrix(new Matrix4());
-		currentCamera = null;
 	}
 
 	@Override

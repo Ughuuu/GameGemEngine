@@ -12,10 +12,16 @@ import com.google.inject.Inject;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class ClickScript extends ScriptComponent {
+public class AutoScript extends ScriptComponent {
+	private static int count = 0;
+	private int dir = 1;
+
 	@Inject
-	public ClickScript(EntitySystem entitySystem, ComponentSystem componentSystem) {
+	public AutoScript(EntitySystem entitySystem, ComponentSystem componentSystem) {
 		super(entitySystem, componentSystem);
+		if (count % 2 == 0) {
+			dir = -1;
+		}
 	}
 
 	@Override
@@ -26,11 +32,11 @@ public class ClickScript extends ScriptComponent {
 	void doLogic() {
 		Entity owner = getOwner();
 		Vector3 pos = owner.getComponent(PointComponent.class).getRelativePosition();
-		Vector3 dir = new Vector3();
-		dir.x = pos.x - Gdx.input.getX();
-		dir.y = pos.y - (Gdx.graphics.getHeight() - Gdx.input.getY());
-		dir.scl(1.f/10.f);
-		pos.sub(dir);
+		pos.x += dir * 5;
+		if (pos.x < 0) {
+			dir *= -1;
+		}
+		pos.x %= Gdx.graphics.getWidth();
 		owner.getComponent(PointComponent.class).setRelativePosition(pos);
 	}
 }

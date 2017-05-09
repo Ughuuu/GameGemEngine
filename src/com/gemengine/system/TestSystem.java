@@ -1,5 +1,6 @@
 package com.gemengine.system;
 
+import com.badlogic.gdx.math.Vector3;
 import com.gemengine.component.CameraComponent;
 import com.gemengine.component.DebugComponent;
 import com.gemengine.component.PointComponent;
@@ -10,6 +11,7 @@ import com.gemengine.entity.Entity;
 import com.gemengine.system.base.ComponentUpdaterSystem;
 import com.google.inject.Inject;
 
+import game.component.AutoScript;
 import game.component.ClickScript;
 import lombok.val;
 import lombok.extern.log4j.Log4j2;
@@ -65,19 +67,31 @@ public class TestSystem extends ComponentUpdaterSystem {
 		gem.createComponent(SpriteComponent.class).setTexturePath("assets/img/gem-ico128.png").setSize(50, 50);
 		gem.createComponent(ClickScript.class);
 		val cam = entitySystem.get("camera");
-		cam.addChild(entitySystem.get("gem"));
+		//cam.addChild(entitySystem.get("gem"));
 	}
 
 	void doSaveTest() {
 		saveSystem.save("assets/scene/test.json");
-		//saveSystem.load("assets/scene/test.json");
+		// saveSystem.load("assets/scene/test.json");
+	}
+
+	void createMultiple() {
+		for (int i = 0; i < 1; i++) {
+			val gem = entitySystem.create("e" + i);
+			gem.createComponent(PointComponent.class).setRelativePosition(new Vector3(i*50, -i * 50, 0));
+			gem.createComponent(SpriteComponent.class).setTexturePath("assets/img/gem-ico128.png").setSize(50, 50);
+			gem.createComponent(AutoScript.class);
+			val cam = entitySystem.get("camera");
+			cam.addChild(gem);
+		}
 	}
 
 	void doTest() {
-		// activateDebug();
+		//activateDebug();
 		createCamera();
-		createSpriteTest();
-		createLabelTest();
+		//createSpriteTest();
+		createMultiple();
+		//createLabelTest();
 		doSaveTest();
 	}
 }
