@@ -14,7 +14,7 @@ import lombok.extern.log4j.Log4j2;
 public class UIStageTrackerSystem extends ComponentTrackerSystem<UIStageComponent, UIWidgetComponent> {
 	@Inject
 	public UIStageTrackerSystem(ComponentSystem componentSystem, EntitySystem entitySystem) {
-		super(componentSystem, entitySystem, ListenerHelper.createConfiguration(UIStageComponent.class), true, 6,
+		super(componentSystem, entitySystem, ListenerHelper.createConfiguration(UIStageComponent.class), true, 12,
 				UIStageComponent.class, UIWidgetComponent.class);
 	}
 }

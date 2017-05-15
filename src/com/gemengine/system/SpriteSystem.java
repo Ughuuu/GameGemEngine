@@ -3,6 +3,7 @@ package com.gemengine.system;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -24,7 +25,7 @@ public class SpriteSystem extends ComponentUpdaterSystem implements ComponentLis
 	private final ComponentSystem componentSystem;
 	private final AssetSystem assetSystem;
 	private final SpriteBatch spriteBatch;
-	private final Map<String, Sprite> textureToSprite = new HashMap<String, Sprite>();
+	private final Map<Integer, Sprite> idToSprite = new HashMap<Integer, Sprite>();
 	private final CameraSystem cameraSystem;
 	private CameraComponent currentCamera;
 
@@ -47,6 +48,9 @@ public class SpriteSystem extends ComponentUpdaterSystem implements ComponentLis
 	public void onBeforeEntities() {
 		spriteBatch.begin();
 		spriteBatch.setTransformMatrix(new Matrix4());
+		if (currentCamera != null) {
+			spriteBatch.setProjectionMatrix(cameraSystem.getCamera(currentCamera).combined);
+		}
 	}
 
 	@Override
@@ -76,6 +80,7 @@ public class SpriteSystem extends ComponentUpdaterSystem implements ComponentLis
 			currentCamera = newCamera;
 			spriteBatch.setProjectionMatrix(cameraSystem.getCamera(currentCamera).combined);
 		}
+		// log.debug(ent);
 		sprite.draw(spriteBatch);
 	}
 
@@ -142,11 +147,11 @@ public class SpriteSystem extends ComponentUpdaterSystem implements ComponentLis
 	}
 
 	private Sprite getSprite(SpriteComponent component) {
-		String texturePath = component.getTexturePath();
-		Sprite sprite = textureToSprite.get(texturePath);
+		int textureId = component.getId();
+		Sprite sprite = idToSprite.get(textureId);
 		if (sprite == null) {
 			sprite = new Sprite();
-			textureToSprite.put(texturePath, sprite);
+			idToSprite.put(textureId, sprite);
 		}
 		return sprite;
 	}

@@ -24,12 +24,14 @@ public class UIStageSystem extends ConstructorSystem<Stage, UIStageComponent>
 		implements ComponentTrackerListener<CameraComponent, DrawableComponent> {
 	private final CameraSystem cameraSystem;
 	private final SpriteBatch spriteBatch = new SpriteBatch();
+	private final ComponentSystem componentSystem;
 
 	@Inject
 	public UIStageSystem(ComponentSystem componentSystem, EntitySystem entitySystem, CameraSystem cameraSystem,
 			CameraTrackerSystem cameraTrackerSystem) {
-		super(componentSystem, entitySystem, true, 6, UIStageComponent.class);
+		super(componentSystem, entitySystem, true, 10, UIStageComponent.class);
 		this.cameraSystem = cameraSystem;
+		this.componentSystem = componentSystem;
 		cameraTrackerSystem.addListener(this);
 	}
 
@@ -52,19 +54,20 @@ public class UIStageSystem extends ConstructorSystem<Stage, UIStageComponent>
 	}
 
 	@Override
-	public void onFound(ComponentTrackerSystem<CameraComponent, DrawableComponent> issuingSystem,
-			CameraComponent notifier, Entity tracker) {
+	public void onFound(CameraComponent notifier, Entity tracker) {
 		UIStageComponent uiStageComponent = tracker.getComponent(UIStageComponent.class);
 		if (uiStageComponent != null) {
 			add(uiStageComponent);
+			componentSystem.notifyFrom("update", uiStageComponent);
 		}
 	}
 
 	@Override
-	public void onLost(ComponentTrackerSystem<CameraComponent, DrawableComponent> issuingSystem, Entity tracker) {
+	public void onLost(Entity tracker) {
 		UIStageComponent uiStageComponent = tracker.getComponent(UIStageComponent.class);
 		if (uiStageComponent != null) {
 			remove(uiStageComponent);
+			componentSystem.notifyFrom("remove", uiStageComponent);
 		}
 	}
 }

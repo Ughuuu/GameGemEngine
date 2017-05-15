@@ -1,13 +1,17 @@
 package com.gemengine.component.ui;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gemengine.component.CameraComponent;
 import com.gemengine.component.Component;
 import com.gemengine.component.PointComponent;
 import com.gemengine.system.ComponentSystem;
+import com.gemengine.system.ui.UIActorSystem;
 
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public abstract class UIWidgetComponent extends UIComponent {
 	@Getter
 	private float width;
@@ -18,6 +22,7 @@ public abstract class UIWidgetComponent extends UIComponent {
 		super(componentSystem);
 	}
 
+	@JsonIgnore
 	public abstract Actor getActor();
 
 	@Override

@@ -1,8 +1,16 @@
 package com.gemengine.system.ui;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.gemengine.component.ui.UIStageComponent;
 import com.gemengine.component.ui.UIWidgetComponent;
 import com.gemengine.entity.Entity;
@@ -15,22 +23,47 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class UIActorSystem extends SystemBase implements ComponentTrackerListener<UIStageComponent, UIWidgetComponent> {
+	private final UIStageSystem uiStageSystem;
+	private final Map<Actor, Table> actorToTable = new HashMap<Actor, Table>();
+
 	@Inject
-	public UIActorSystem(UIStageTrackerSystem uiStageTrackerSystem) {
-		super(true, 6);
+	public UIActorSystem(UIStageTrackerSystem uiStageTrackerSystem, UIStageSystem uiStageSystem) {
+		super(true, 100);
+		this.uiStageSystem = uiStageSystem;
 		uiStageTrackerSystem.addListener(this);
 	}
 
 	@Override
-	public void onFound(ComponentTrackerSystem<UIStageComponent, UIWidgetComponent> issuingSystem,
-			UIStageComponent notifier, Entity component) {
+	public void onFound(UIStageComponent notifier, Entity component) {
+		if (uiStageSystem.get(notifier) == null) {
+			return;
+		}
 		List<UIWidgetComponent> widgets = component.getComponents(UIWidgetComponent.class);
-		UIWidgetComponent widget;
-		log.debug("onFound {} {}", notifier, widgets);
+		for (UIWidgetComponent widget : widgets) {
+			Stage stage = new Stage();
+			Table table = new Table();
+			Actor actor = widget.getActor();
+			LabelStyle style = new LabelStyle();
+			style.font = new BitmapFont();
+			actor= new Label("asd", style);
+			//Stage stage = uiStageSystem.get(notifier);
+			actorToTable.put(actor, table);
+			table.add(actor).width(100f);
+			table.setFillParent(true);
+			table.setPosition(1, 1);
+			stage.addActor(table);
+			stage.setDebugAll(true);
+			stage.act();
+		}
 	}
 
 	@Override
-	public void onLost(ComponentTrackerSystem<UIStageComponent, UIWidgetComponent> issuingSystem, Entity component) {
-		log.debug("onLost {}", component);
+	public void onLost(Entity component) {
+	}
+
+	@Override
+	public Set<String> getConfiguration() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

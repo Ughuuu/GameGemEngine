@@ -1,6 +1,8 @@
 package com.gemengine.system.base;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,13 +11,16 @@ import java.util.Set;
 import com.gemengine.component.Component;
 import com.gemengine.entity.Entity;
 import com.gemengine.listener.EntityListener;
+import com.gemengine.listener.PriorityListener;
 import com.gemengine.system.ComponentSystem;
 import com.gemengine.system.EntitySystem;
 import com.gemengine.system.base.ComponentListenerSystem;
 import com.gemengine.system.listener.ComponentTrackerListener;
 
 import lombok.val;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public abstract class ComponentTrackerSystem<ComponentTracked extends Component, ComponentTracking extends Component>
 		extends ComponentListenerSystem implements EntityListener {
 	private final ComponentSystem componentSystem;
@@ -35,6 +40,7 @@ public abstract class ComponentTrackerSystem<ComponentTracked extends Component,
 
 	public void addListener(ComponentTrackerListener<ComponentTracked, ComponentTracking> listener) {
 		listeners.add(listener);
+		Collections.sort(listeners, PriorityListener.getComparator());
 	}
 
 	public ComponentTracked getTrackedComponentUp(Entity ent) {
@@ -96,10 +102,10 @@ public abstract class ComponentTrackerSystem<ComponentTracked extends Component,
 	private void addComponent(ComponentTracked component) {
 		Set<Entity> drawables = componentSystem.getOwner(component).getDescendantsOf(componentTrackingType);
 		for (Entity ent : drawables) {
-			for (ComponentTrackerListener<ComponentTracked, ComponentTracking> listener : listeners) {
-				listener.onFound(this, component, ent);
-			}
 			entityToTrackedComponent.put(ent.getId(), component);
+			for (ComponentTrackerListener<ComponentTracked, ComponentTracking> listener : listeners) {
+				listener.onFound(component, ent);
+			}
 		}
 	}
 
@@ -108,7 +114,7 @@ public abstract class ComponentTrackerSystem<ComponentTracked extends Component,
 		for (Entity draw : drawables) {
 			entityToTrackedComponent.remove(draw.getId());
 			for (ComponentTrackerListener<ComponentTracked, ComponentTracking> listener : listeners) {
-				listener.onLost(this, draw);
+				listener.onLost(draw);
 			}
 		}
 	}

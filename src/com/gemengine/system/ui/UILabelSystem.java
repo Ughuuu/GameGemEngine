@@ -18,7 +18,7 @@ public class UILabelSystem extends ConstructorSystem<Label, UILabelComponent> {
 
 	@Inject
 	public UILabelSystem(AssetSystem assetSystem, ComponentSystem componentSystem, EntitySystem entitySystem) {
-		super(componentSystem, entitySystem, true, 6, UILabelComponent.class);
+		super(componentSystem, entitySystem, true, 16, UILabelComponent.class);
 		this.assetSystem = assetSystem;
 	}
 

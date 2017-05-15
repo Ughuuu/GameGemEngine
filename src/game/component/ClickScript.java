@@ -20,16 +20,12 @@ public class ClickScript extends ScriptComponent {
 
 	@Override
 	public void onUpdate(float delta) {
-		doLogic();
-	}
-
-	void doLogic() {
 		Entity owner = getOwner();
 		Vector3 pos = owner.getComponent(PointComponent.class).getRelativePosition();
 		Vector3 dir = new Vector3();
 		dir.x = pos.x - Gdx.input.getX();
 		dir.y = pos.y - (Gdx.graphics.getHeight() - Gdx.input.getY());
-		dir.scl(1.f/10.f);
+		dir.scl(delta * 3);
 		pos.sub(dir);
 		owner.getComponent(PointComponent.class).setRelativePosition(pos);
 	}

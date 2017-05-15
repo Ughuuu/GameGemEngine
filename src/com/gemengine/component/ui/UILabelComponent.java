@@ -1,6 +1,7 @@
 package com.gemengine.component.ui;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gemengine.system.ComponentSystem;
 import com.gemengine.system.ui.UILabelSystem;
 import com.google.inject.Inject;
@@ -15,6 +16,7 @@ public class UILabelComponent extends UIWidgetComponent {
 
 	@Getter
 	private String text = "";
+
 	@Inject
 	public UILabelComponent(ComponentSystem componentSystem, UILabelSystem labelSystem) {
 		super(componentSystem);
@@ -22,6 +24,7 @@ public class UILabelComponent extends UIWidgetComponent {
 	}
 
 	@Override
+	@JsonIgnore
 	public Actor getActor() {
 		return labelSystem.get(this);
 	}

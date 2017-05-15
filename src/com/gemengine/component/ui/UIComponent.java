@@ -8,6 +8,7 @@ public abstract class UIComponent extends DrawableComponent {
 	protected int depth = 0;
 
 	protected int align = Align.center;
+
 	public UIComponent(ComponentSystem componentSystem) {
 		super(componentSystem);
 	}

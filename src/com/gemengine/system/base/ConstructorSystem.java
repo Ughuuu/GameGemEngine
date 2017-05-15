@@ -22,8 +22,8 @@ public abstract class ConstructorSystem<T, U extends Component> extends Componen
 		types = new HashMap<Integer, T>();
 	}
 
-	public T get(U labelComponent) {
-		Integer id = labelComponent.getId();
+	public T get(U component) {
+		Integer id = component.getId();
 		return types.get(id);
 	}
 
@@ -43,13 +43,14 @@ public abstract class ConstructorSystem<T, U extends Component> extends Componen
 	@Override
 	public <L extends Component> void onNotify(String event, L notifier) {
 		U component = (U) notifier;
-		if (get(component) == null) {
-			T res = create(component);
+		T res = get(component);
+		if (res == null) {
+			res = create(component);
 			if (res == null) {
 				return;
 			}
-			onEvent(event, component, res);
 		}
+		onEvent(event, component, res);
 	}
 
 	protected T add(U comp) {
