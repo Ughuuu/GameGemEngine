@@ -2,6 +2,7 @@ package com.gemengine.system;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,29 +15,35 @@ import com.gemengine.component.PointComponent;
 import com.gemengine.component.SpriteComponent;
 import com.gemengine.entity.Entity;
 import com.gemengine.listener.ComponentListener;
-import com.gemengine.system.base.ComponentUpdaterSystem;
+import com.gemengine.listener.ComponentUpdaterListener;
+import com.gemengine.system.base.SystemBase;
 import com.gemengine.system.helper.ListenerHelper;
 import com.google.inject.Inject;
 
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class SpriteSystem extends ComponentUpdaterSystem implements ComponentListener {
+public class SpriteSystem extends SystemBase implements ComponentListener, ComponentUpdaterListener {
 	private final ComponentSystem componentSystem;
 	private final AssetSystem assetSystem;
 	private final SpriteBatch spriteBatch;
 	private final Map<Integer, Sprite> idToSprite = new HashMap<Integer, Sprite>();
 	private final CameraSystem cameraSystem;
 	private CameraComponent currentCamera;
+	@SuppressWarnings("unchecked")
+	@Getter
+	private final Set<String> configuration = ListenerHelper.createConfiguration(SpriteComponent.class);
 
 	@Inject
 	public SpriteSystem(ComponentSystem componentSystem, AssetSystem assetSystem, CameraSystem cameraSystem) {
-		super(componentSystem, ListenerHelper.createConfiguration(SpriteComponent.class), true, 5);
+		super(true, 5);
 		this.componentSystem = componentSystem;
 		this.assetSystem = assetSystem;
 		this.cameraSystem = cameraSystem;
 		spriteBatch = new SpriteBatch();
-		componentSystem.addComponentListener(this);
+		componentSystem.addComponentListener(this);;
+		componentSystem.addComponentUpdater(this);
 	}
 
 	@Override

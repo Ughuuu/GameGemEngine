@@ -32,7 +32,7 @@ public class AutoScript extends ScriptComponent {
 	@Override
 	public void onUpdate(float delta) {
 		pos.x += dir.x * 2;
-		pos.y += dir.y * 20;
+		pos.y += dir.y * 2;
 		if (pos.x < 0) {
 			pos.x = 0;
 			dir.x *= -1;

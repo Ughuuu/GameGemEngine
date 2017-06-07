@@ -8,10 +8,6 @@ import lombok.Getter;
 
 public class SpriteComponent extends DrawableComponent {
 	@Getter
-	private float width;
-	@Getter
-	private float height;
-	@Getter
 	private String texturePath;
 
 	@Inject
@@ -27,33 +23,15 @@ public class SpriteComponent extends DrawableComponent {
 		doNotify("point");
 	}
 
-	public SpriteComponent setHeight(float height) {
-		this.height = height;
-		doNotify("size");
-		return this;
-	}
-
-	public SpriteComponent setSize(float width, float height) {
-		this.height = height;
-		this.width = width;
-		doNotify("size");
-		return this;
-	}
-
 	public SpriteComponent setTexturePath(String texturePath) {
 		this.texturePath = texturePath;
 		doNotify("texturePath");
 		return this;
 	}
 
-	public SpriteComponent setWidth(float width) {
-		this.width = width;
-		doNotify("size");
-		return this;
-	}
-
 	@Override
 	public String toString() {
-		return "SpriteComponent [width=" + width + ", height=" + height + ", texturePath=" + texturePath + "]";
+		return "SpriteComponent [width=" + getWidth() + ", height=" + getHeight() + ", texturePath=" + texturePath
+				+ "]";
 	}
 }

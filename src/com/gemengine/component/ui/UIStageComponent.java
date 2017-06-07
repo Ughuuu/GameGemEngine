@@ -1,14 +1,20 @@
 package com.gemengine.component.ui;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.gemengine.system.ComponentSystem;
-import com.gemengine.system.ui.UIStageTrackerSystem;
+import com.gemengine.system.SpriteSystem;
+import com.gemengine.system.ui.UIStageSystem;
+import com.gemengine.system.ui.UITrackerSystem;
 import com.google.inject.Inject;
 
-public class UIStageComponent extends UIComponent {
-	private final UIStageTrackerSystem uiStageSystem;
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
+public class UIStageComponent extends UILayoutComponent {
+	private final UIStageSystem uiStageSystem;
 
 	@Inject
-	public UIStageComponent(ComponentSystem componentSystem, UIStageTrackerSystem uiStageSystem) {
+	public UIStageComponent(ComponentSystem componentSystem, UIStageSystem uiStageSystem) {
 		super(componentSystem);
 		this.uiStageSystem = uiStageSystem;
 	}
@@ -18,4 +24,12 @@ public class UIStageComponent extends UIComponent {
 		return "UIStageComponent []";
 	}
 
+	public void onChildNotify(UIComponent child) {
+		uiStageSystem.addChild(this, child);
+	}
+
+	@Override
+	public Actor getActor() {
+		return null;
+	}
 }

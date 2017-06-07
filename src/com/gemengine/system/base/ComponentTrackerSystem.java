@@ -28,13 +28,16 @@ public abstract class ComponentTrackerSystem<ComponentTracked extends Component,
 	private List<ComponentTrackerListener<ComponentTracked, ComponentTracking>> listeners = new ArrayList<ComponentTrackerListener<ComponentTracked, ComponentTracking>>();
 	private final Class<ComponentTracked> componentTrackedType;
 	private final Class<ComponentTracking> componentTrackingType;
+	private final boolean trackAllSubcomponents;
 
 	public ComponentTrackerSystem(ComponentSystem componentSystem, EntitySystem entitySystem, Set<String> configuration,
-			boolean enable, int priority, Class<ComponentTracked> tracked, Class<ComponentTracking> tracking) {
+			boolean enable, int priority, Class<ComponentTracked> tracked, Class<ComponentTracking> tracking,
+			boolean trackAllSubcomponents) {
 		super(componentSystem, configuration, enable, priority);
 		this.componentTrackedType = tracked;
 		this.componentTrackingType = tracking;
 		this.componentSystem = componentSystem;
+		this.trackAllSubcomponents = trackAllSubcomponents;
 		entitySystem.addEntityListener(this);
 	}
 
@@ -66,12 +69,10 @@ public abstract class ComponentTrackerSystem<ComponentTracked extends Component,
 		if (ent1.getComponent(componentTrackedType) != null) {
 			ent = ent1;
 		} else {
-			Set<Entity> components = ent1.getPredecessorsOf(componentTrackedType);
-			val iterator = components.iterator();
-			if (!iterator.hasNext()) {
-				return;
-			}
-			ent = iterator.next();
+			ent = ent1.getFirstPredecessorOf(componentTrackedType);
+		}
+		if (ent == null) {
+			return;
 		}
 		switch (change) {
 		case DEPARENTED:
@@ -100,8 +101,13 @@ public abstract class ComponentTrackerSystem<ComponentTracked extends Component,
 	}
 
 	private void addComponent(ComponentTracked component) {
-		Set<Entity> drawables = componentSystem.getOwner(component).getDescendantsOf(componentTrackingType);
-		for (Entity ent : drawables) {
+		Set<Entity> trackees = null;
+		if (trackAllSubcomponents) {
+			trackees = componentSystem.getOwner(component).getDescendantsOf(componentTrackingType);
+		} else {
+			trackees = componentSystem.getOwner(component).getFirstDescendantsOf(componentTrackingType);
+		}
+		for (Entity ent : trackees) {
 			entityToTrackedComponent.put(ent.getId(), component);
 			for (ComponentTrackerListener<ComponentTracked, ComponentTracking> listener : listeners) {
 				listener.onFound(component, ent);
@@ -109,9 +115,17 @@ public abstract class ComponentTrackerSystem<ComponentTracked extends Component,
 		}
 	}
 
-	private void removeComponent(Entity camera) {
-		Set<Entity> drawables = camera.getDescendantsOf(componentTrackingType);
-		for (Entity draw : drawables) {
+	private void removeComponent(Entity tracked) {
+		Set<Entity> trackees = null;
+		if (trackAllSubcomponents) {
+			tracked.getDescendantsOf(componentTrackingType);
+		} else {
+			tracked.getFirstDescendantsOf(componentTrackingType);
+		}
+		if (trackees == null) {
+			return;
+		}
+		for (Entity draw : trackees) {
 			entityToTrackedComponent.remove(draw.getId());
 			for (ComponentTrackerListener<ComponentTracked, ComponentTracking> listener : listeners) {
 				listener.onLost(draw);

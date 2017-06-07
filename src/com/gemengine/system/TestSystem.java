@@ -7,14 +7,16 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.gemengine.component.CameraComponent;
 import com.gemengine.component.DebugComponent;
 import com.gemengine.component.PointComponent;
 import com.gemengine.component.SpriteComponent;
+import com.gemengine.component.ui.UIContainerComponent;
 import com.gemengine.component.ui.UILabelComponent;
 import com.gemengine.component.ui.UIStageComponent;
 import com.gemengine.entity.Entity;
-import com.gemengine.system.base.ComponentUpdaterSystem;
+import com.gemengine.system.base.SystemBase;
 import com.google.inject.Inject;
 
 import game.component.AutoScript;
@@ -24,7 +26,7 @@ import lombok.val;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class TestSystem extends ComponentUpdaterSystem {
+public class TestSystem extends SystemBase {
 	private final EntitySystem entitySystem;
 	private final ComponentSystem componentSystem;
 	private final SaveSystem saveSystem;
@@ -33,7 +35,7 @@ public class TestSystem extends ComponentUpdaterSystem {
 	@Inject
 	public TestSystem(EntitySystem entitySystem, ComponentSystem componentSystem, SaveSystem saveSystem,
 			ScriptSystem scr, AssetSystem assetSystem) {
-		super(componentSystem);
+		super();
 		this.entitySystem = entitySystem;
 		this.saveSystem = saveSystem;
 		this.componentSystem = componentSystem;
@@ -44,11 +46,6 @@ public class TestSystem extends ComponentUpdaterSystem {
 	public void onInit() {
 		assetSystem.loadFolder("assets/img/");
 		doTest();
-	}
-
-	@Override
-	public void onNext(Entity ent) {
-		System.out.println(ent.getName());
 	}
 
 	void activateDebug() {
@@ -69,11 +66,15 @@ public class TestSystem extends ComponentUpdaterSystem {
 		val label = entitySystem.create("label");
 		label.createComponent(PointComponent.class);
 		label.createComponent(UILabelComponent.class).setText("text").setFont("assets/font/sea.fnt").setSize(100, 100);
-		scene.addChild(label);
+		val container = entitySystem.create("labelContainer");
+		container.createComponent(PointComponent.class);
+		container.createComponent(UIContainerComponent.class).setAlign(Align.bottom);
+		container.addChild(label);
+		scene.addChild(container);
 		val cam = entitySystem.get("camera");
 		cam.addChild(entitySystem.get("scene"));
-		//label.createComponent(ClickScript.class);
-		//scene.createComponent(ClickScript.class);
+		// label.createComponent(ClickScript.class);
+		// scene.createComponent(ClickScript.class);
 	}
 
 	void createSpriteTest() {
@@ -86,8 +87,8 @@ public class TestSystem extends ComponentUpdaterSystem {
 	}
 
 	void doSaveTest() {
-		// saveSystem.save("assets/scene/test.json");
-		// saveSystem.load("assets/scene/test.json");
+		saveSystem.save("assets/scene/test.json");
+		//saveSystem.load("assets/scene/test.json");
 	}
 
 	void createMultiple() {
@@ -124,10 +125,10 @@ public class TestSystem extends ComponentUpdaterSystem {
 	void doTest() {
 		// activateDebug();
 		createCamera();
-		// createButtons();
-		// createSpriteTest();
-		// createMultiple();
-		createLabelTest();
-		// doSaveTest();
+		//createButtons();
+		createSpriteTest();
+		createMultiple();
+		//createLabelTest();
+		doSaveTest();
 	}
 }

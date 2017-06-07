@@ -8,18 +8,28 @@ repositories {
 buildDir='build'
 
 ext {
-	gemEngineVersion = '825ec1d1e2'
-	gemEngineBasePackVersion = '566a80c080'
+	gemEngineVersion = '8a255587fc'
+	gemEngineBasePackVersion = 'e2a5c5b405'
      lombokVersion = "1.16.16"
     }
 
     dependencies {
     	compileOnly "com.github.Ughuuu:GemMaker:$gemEngineVersion"
     	compileOnly "org.projectlombok:lombok:$lombokVersion"
-    	compile "com.github.Ughuuu:GemEngineBasePack:$gemEngineBasePackVersion"
+    	//compile "com.github.Ughuuu:GemEngineBasePack:$gemEngineBasePackVersion"
     }
-    
+
+task deleteLib(type: Delete){
+	delete "$buildDir/../Engine/assets/libs"
+}
+
 task copyToLib(type: Copy) {
     into "$buildDir/../Engine/assets/libs"
     from configurations.runtime
+}
+
+task moveLib{
+	dependsOn 'deleteLib'
+	dependsOn 'copyToLib'
+	tasks.findByName('copyToLib').mustRunAfter 'deleteLib'
 }
