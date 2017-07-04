@@ -27,8 +27,8 @@ import lombok.extern.log4j.Log4j2;
 public class SpriteSystem extends SystemBase implements ComponentListener, ComponentUpdaterListener {
 	private final ComponentSystem componentSystem;
 	private final AssetSystem assetSystem;
-	private final SpriteBatch spriteBatch;
-	private final Map<Integer, Sprite> idToSprite = new HashMap<Integer, Sprite>();
+	public static final SpriteBatch spriteBatch = new SpriteBatch();
+	private final Map<Integer, Sprite> idToSprite;
 	private final CameraSystem cameraSystem;
 	private CameraComponent currentCamera;
 	@SuppressWarnings("unchecked")
@@ -41,9 +41,9 @@ public class SpriteSystem extends SystemBase implements ComponentListener, Compo
 		this.componentSystem = componentSystem;
 		this.assetSystem = assetSystem;
 		this.cameraSystem = cameraSystem;
-		spriteBatch = new SpriteBatch();
-		componentSystem.addComponentListener(this);;
+		componentSystem.addComponentListener(this);
 		componentSystem.addComponentUpdater(this);
+		idToSprite = new HashMap<Integer, Sprite>();
 	}
 
 	@Override
@@ -53,16 +53,15 @@ public class SpriteSystem extends SystemBase implements ComponentListener, Compo
 
 	@Override
 	public void onBeforeEntities() {
-		spriteBatch.begin();
 		spriteBatch.setTransformMatrix(new Matrix4());
 		if (currentCamera != null) {
 			spriteBatch.setProjectionMatrix(cameraSystem.getCamera(currentCamera).combined);
 		}
+		spriteBatch.begin();
 	}
 
 	@Override
 	public <T extends Component> void onChange(ComponentChangeType arg0, T arg1) {
-
 	}
 
 	@Override
@@ -80,6 +79,7 @@ public class SpriteSystem extends SystemBase implements ComponentListener, Compo
 		}
 		CameraComponent newCamera = cameraSystem.getWatchingCamera(ent);
 		if (newCamera == null) {
+			log.warn("No camera for sprite {}", ent);
 			spriteComponent.setEnable(false);
 			return;
 		}
@@ -87,7 +87,6 @@ public class SpriteSystem extends SystemBase implements ComponentListener, Compo
 			currentCamera = newCamera;
 			spriteBatch.setProjectionMatrix(cameraSystem.getCamera(currentCamera).combined);
 		}
-		// log.debug(ent);
 		sprite.draw(spriteBatch);
 	}
 
@@ -122,14 +121,9 @@ public class SpriteSystem extends SystemBase implements ComponentListener, Compo
 
 	public void setSize(SpriteComponent component, float width, float height) {
 		String texturePath = component.getTexturePath();
-		Texture texture = assetSystem.getAsset(texturePath);
-		if (texture == null) {
-			log.warn("Sprite System cannot load texture {}", texturePath);
-			component.setEnable(false);
-			return;
-		}
-		component.setEnable(true);
 		Sprite spr = getSprite(component);
+		component.texture(spr);
+		component.setEnable(true);
 		spr.setOrigin(width / 2, height / 2);
 		spr.setSize(width, height);
 		PointComponent point = componentSystem.getOwner(component.getId()).getComponent(PointComponent.class);
@@ -140,17 +134,9 @@ public class SpriteSystem extends SystemBase implements ComponentListener, Compo
 
 	public void setTexture(SpriteComponent component) {
 		String texturePath = component.getTexturePath();
-		Texture texture = assetSystem.getAsset(texturePath);
-		if (texture == null) {
-			log.warn("Sprite System wrong texture path {}", texturePath);
-			component.setEnable(false);
-			return;
-		}
-		component.setEnable(true);
 		Sprite sprite = getSprite(component);
-		sprite.setTexture(texture);
-		sprite.setRegion(0, 0, texture.getWidth(), texture.getHeight());
-		setSize(component, texture.getWidth(), texture.getHeight());
+		component.texture(sprite);
+		setSize(component, component.getWidth(), component.getHeight());
 	}
 
 	private Sprite getSprite(SpriteComponent component) {

@@ -13,6 +13,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Widget component is used in ui systems to differentiate between components
+ * that are used for layout and components that represent widgets.
+ * 
+ * @author Dragos
+ *
+ */
 @Log4j2
 public abstract class UIWidgetComponent extends UIComponent {
 

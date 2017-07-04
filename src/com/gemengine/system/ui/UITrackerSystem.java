@@ -1,5 +1,6 @@
 package com.gemengine.system.ui;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.gemengine.component.ui.UIComponent;
 import com.gemengine.component.ui.UILayoutComponent;
 import com.gemengine.component.ui.UIStageComponent;

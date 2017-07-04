@@ -11,7 +11,7 @@ public class CameraTrackerSystem extends ComponentTrackerSystem<CameraComponent,
 
 	@Inject
 	public CameraTrackerSystem(ComponentSystem componentSystem, EntitySystem entitySystem) {
-		super(componentSystem, entitySystem, ListenerHelper.createConfiguration(CameraComponent.class), true, 6,
+		super(componentSystem, entitySystem, ListenerHelper.createConfiguration(CameraComponent.class), true, 7,
 				CameraComponent.class, DrawableComponent.class, true);
 		this.componentSystem = componentSystem;
 	}

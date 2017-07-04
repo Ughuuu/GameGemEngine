@@ -18,7 +18,7 @@ public class UILabelSystem extends ConstructorSystem<Label, UILabelComponent> {
 
 	@Inject
 	public UILabelSystem(AssetSystem assetSystem, ComponentSystem componentSystem, EntitySystem entitySystem) {
-		super(componentSystem, entitySystem, true, 16, UILabelComponent.class);
+		super(componentSystem, entitySystem, true, 7, UILabelComponent.class);
 		this.assetSystem = assetSystem;
 	}
 
@@ -30,13 +30,15 @@ public class UILabelSystem extends ConstructorSystem<Label, UILabelComponent> {
 			style.font = assetSystem.getAsset(fontPath);
 		}
 		if (style.font == null) {
-			style.font = new BitmapFont();
+			BitmapFont font = new BitmapFont();
+			style.font = font;
 		}
 		String text = component.getText();
 		if (text == null) {
 			text = "";
 		}
 		Label label = new Label(text, style);
+		label.setFontScale(component.getFontScale());
 		return label;
 	}
 
@@ -48,6 +50,9 @@ public class UILabelSystem extends ConstructorSystem<Label, UILabelComponent> {
 			break;
 		case "font":
 			add(notifier);
+			break;
+		case "fontScale":
+			label.setFontScale(notifier.getFontScale());
 			break;
 		}
 	}

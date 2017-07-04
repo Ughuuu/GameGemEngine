@@ -23,10 +23,10 @@ public class ClickScript extends ScriptComponent {
 		Entity owner = getOwner();
 		Vector3 pos = owner.getComponent(PointComponent.class).getRelativePosition();
 		Vector3 dir = new Vector3();
-		dir.x = pos.x - Gdx.input.getX();
-		dir.y = pos.y - (Gdx.graphics.getHeight() - Gdx.input.getY());
-		dir.scl(delta * 3);
-		pos.sub(dir);
+		dir.x = Gdx.input.getX() * 2;
+		dir.y = (Gdx.graphics.getHeight() - Gdx.input.getY());
+		//dir.scl(delta * 5);
+		pos.set(dir);
 		owner.getComponent(PointComponent.class).setRelativePosition(pos);
 	}
 }

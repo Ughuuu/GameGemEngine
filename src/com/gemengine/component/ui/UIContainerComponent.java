@@ -11,6 +11,16 @@ import com.google.inject.Inject;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Component with libgdx Container Component. This layout type can hold exactly
+ * one ui widget or layout. General use case is to parent to the entity that has
+ * this component a widget or layout, and parent this component owner to an
+ * entity containing a scene component. Also, the scene component must be
+ * parented to a camera.
+ * 
+ * @author Dragos
+ *
+ */
 @Log4j2
 public class UIContainerComponent extends UILayoutComponent {
 	@Getter
@@ -30,46 +40,46 @@ public class UIContainerComponent extends UILayoutComponent {
 	}
 
 	public void onChildNotify(UIComponent child) {
-		uiContainerSystem.createContainer(this, child);
+		uiContainerSystem.create(this, child);
 	}
 
-	public UILayoutComponent setFillX(float fillX) {
+	public UIContainerComponent setFillX(float fillX) {
 		this.fillX = fillX;
 		doNotify("fill");
 		return this;
 	}
 
-	public UILayoutComponent setFillY(float fillY) {
+	public UIContainerComponent setFillY(float fillY) {
 		this.fillY = fillY;
 		doNotify("fill");
 		return this;
 	}
 
-	public UILayoutComponent setPadTop(float padTop) {
+	public UIContainerComponent setPadTop(float padTop) {
 		this.padTop = padTop;
 		doNotify("pad");
 		return this;
 	}
 
-	public UILayoutComponent setPadBottom(float padBottom) {
+	public UIContainerComponent setPadBottom(float padBottom) {
 		this.padBottom = padBottom;
 		doNotify("pad");
 		return this;
 	}
 
-	public UILayoutComponent setPadLeft(float padLeft) {
+	public UIContainerComponent setPadLeft(float padLeft) {
 		this.padLeft = padLeft;
 		doNotify("pad");
 		return this;
 	}
 
-	public UILayoutComponent setPadRight(float padRight) {
+	public UIContainerComponent setPadRight(float padRight) {
 		this.padRight = padRight;
 		doNotify("pad");
 		return this;
 	}
 
-	public UILayoutComponent setAlign(int align) {
+	public UIContainerComponent setAlign(int align) {
 		this.align = align;
 		doNotify("align");
 		return this;
@@ -77,6 +87,6 @@ public class UIContainerComponent extends UILayoutComponent {
 
 	@Override
 	public Actor getActor() {
-		return uiContainerSystem.getContainer(this);
+		return uiContainerSystem.get(this);
 	}
 }

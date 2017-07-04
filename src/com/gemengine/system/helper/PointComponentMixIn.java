@@ -34,6 +34,9 @@ public abstract class PointComponentMixIn {
 
 	@JsonProperty("position")
 	abstract Vector3 getRelativePosition();
+	
+	@JsonProperty("position")
+	abstract Vector3 setRelativePosition(Vector3 scale);
 
 	@JsonIgnore
 	abstract Quaternion getRelativeQuaternion();
@@ -43,12 +46,15 @@ public abstract class PointComponentMixIn {
 
 	@JsonProperty("rotation")
 	abstract Vector3 getRelativeRotation();
+	
+	@JsonProperty("rotation")
+	abstract Vector3 setRelativeRotation(Vector3 scale);
 
 	@JsonProperty("scale")
 	abstract Vector3 getRelativeScale();
 	
 	@JsonProperty("scale")
-	abstract Vector3 setRelativeScale();
+	abstract Vector3 setRelativeScale(Vector3 scale);
 
 	@JsonIgnore
 	abstract Vector3 getRelativeUp();

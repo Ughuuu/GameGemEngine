@@ -16,6 +16,9 @@ public class UILabelComponent extends UIWidgetComponent {
 
 	@Getter
 	private String text = "";
+	
+	@Getter
+	private float fontScale = 1;
 
 	@Inject
 	public UILabelComponent(ComponentSystem componentSystem, UILabelSystem labelSystem) {
@@ -33,6 +36,12 @@ public class UILabelComponent extends UIWidgetComponent {
 		font = fontName;
 		doNotify("font");
 		return this;
+	}
+	
+	public UILabelComponent setfontScale(float fontScale){
+		this.fontScale = fontScale;
+		doNotify("fontScale");
+		return this;		
 	}
 
 	public UILabelComponent setText(String text) {

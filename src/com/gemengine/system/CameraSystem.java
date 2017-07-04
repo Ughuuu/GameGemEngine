@@ -32,7 +32,7 @@ public class CameraSystem extends ComponentListenerSystem {
 	@Inject
 	protected CameraSystem(ComponentSystem componentSystem, EntitySystem entitySystem,
 			CameraTrackerSystem cameraTrackerSystem) {
-		super(componentSystem, ListenerHelper.createConfiguration(CameraComponent.class), true, 6);
+		super(componentSystem, ListenerHelper.createConfiguration(CameraComponent.class), true, 7);
 		this.cameraTrackerSystem = cameraTrackerSystem;
 		this.componentSystem = componentSystem;
 		viewports = new HashMap<Integer, Viewport>();
@@ -78,6 +78,9 @@ public class CameraSystem extends ComponentListenerSystem {
 		case "create":
 			createCamera(cameraComponent);
 		case "viewportType":
+			if (getViewport(cameraComponent) == null) {
+				createCamera(cameraComponent);
+			}
 			Viewport viewport = createViewport(cameraComponent, getViewport(cameraComponent).getCamera());
 			changeViewport(cameraComponent);
 			viewports.put(cameraComponent.getId(), viewport);
@@ -95,9 +98,11 @@ public class CameraSystem extends ComponentListenerSystem {
 	public void onResize(int width, int height) {
 		for (val entry : viewports.entrySet()) {
 			CameraComponent camera = componentSystem.get(componentSystem.getOwner(entry.getKey()), entry.getKey());
-			camera.setSize(width, height);
 			if (camera.isResizeable()) {
+				camera.setSize(width, height);
 				entry.getValue().update(width, height, false);
+			}else{
+				//camera.setSize(camera.getWidth(), camera.getHeight());
 			}
 			setPoint(camera, camera.getOwner().getComponent(PointComponent.class));
 		}

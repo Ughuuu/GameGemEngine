@@ -9,6 +9,21 @@ import com.google.inject.Inject;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Stage component that contains all UI Components that are not contained by
+ * other UI Components. Only first level of entities that contain ui components
+ * are added into the stage.
+ * Ex:
+ *   Stage
+ *     |    \
+ *    UIa    UIc
+ *     |
+ *    UIb
+ * Only UIa and UIc are added automatically by ui system into the stage. 
+ * In this example, UIa should be a layout component(ex container).
+ * @author Dragos
+ *
+ */
 @Log4j2
 public class UIStageComponent extends UILayoutComponent {
 	private final UIStageSystem uiStageSystem;

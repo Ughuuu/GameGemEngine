@@ -1,5 +1,6 @@
 package com.gemengine.system.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -14,9 +15,11 @@ import com.gemengine.system.CameraSystem;
 import com.gemengine.system.CameraTrackerSystem;
 import com.gemengine.system.ComponentSystem;
 import com.gemengine.system.EntitySystem;
+import com.gemengine.system.SpriteSystem;
 import com.gemengine.system.base.ComponentTrackerSystem;
 import com.gemengine.system.base.ConstructorSystem;
 import com.gemengine.system.listener.ComponentTrackerListener;
+import com.gemengine.system.manager.SystemManager;
 import com.google.inject.Inject;
 
 import lombok.extern.log4j.Log4j2;
@@ -25,15 +28,16 @@ import lombok.extern.log4j.Log4j2;
 public class UIStageSystem extends ConstructorSystem<Stage, UIStageComponent>
 		implements ComponentTrackerListener<CameraComponent, DrawableComponent>, ComponentUpdaterListener {
 	private final CameraSystem cameraSystem;
-	private final SpriteBatch spriteBatch = new SpriteBatch();
 	private final ComponentSystem componentSystem;
+	private final SystemManager systemManager;
 
 	@Inject
 	public UIStageSystem(ComponentSystem componentSystem, EntitySystem entitySystem, CameraSystem cameraSystem,
-			CameraTrackerSystem cameraTrackerSystem) {
+			CameraTrackerSystem cameraTrackerSystem, SystemManager systemManager) {
 		super(componentSystem, entitySystem, true, 10, UIStageComponent.class);
 		this.cameraSystem = cameraSystem;
 		this.componentSystem = componentSystem;
+		this.systemManager = systemManager;
 		cameraTrackerSystem.addListener(this);
 		componentSystem.addComponentUpdater(this);
 	}
@@ -48,7 +52,7 @@ public class UIStageSystem extends ConstructorSystem<Stage, UIStageComponent>
 		if (view == null) {
 			return null;
 		}
-		return new Stage(view, spriteBatch);
+		return new Stage(view, SpriteSystem.spriteBatch);
 	}
 
 	@Override
@@ -87,8 +91,10 @@ public class UIStageSystem extends ConstructorSystem<Stage, UIStageComponent>
 		UIStageComponent stageComponent = ent.getComponent(UIStageComponent.class);
 		Stage stage = get(stageComponent);
 		if (stage != null) {
+			stage.setDebugAll(true);
 			stage.act();
 			stage.draw();
+			systemManager.addInputProcessor(stage);
 		}
 	}
 
@@ -97,6 +103,8 @@ public class UIStageSystem extends ConstructorSystem<Stage, UIStageComponent>
 		if (stage == null) {
 			return;
 		}
-		stage.addActor(uiComponent.getActor());
+		if (uiComponent.getActor() != null) {
+			stage.addActor(uiComponent.getActor());
+		}
 	}
 }

@@ -7,12 +7,14 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gemengine.component.Component;
 import com.gemengine.entity.Entity;
 import com.gemengine.listener.EntityListener;
 import com.gemengine.system.base.ComponentListenerSystem;
+import com.gemengine.system.base.SystemBase;
 import com.gemengine.system.helper.ListenerHelper;
 import com.gemengine.system.helper.ObjectMapperConfigurator;
 import com.google.inject.Inject;
@@ -21,7 +23,7 @@ import lombok.val;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class SaveSystem extends ComponentListenerSystem implements EntityListener {
+public class SaveSystem extends SystemBase implements EntityListener {
 	public static class SaveEntity {
 		public String name;
 		public Component[] components;
@@ -33,7 +35,6 @@ public class SaveSystem extends ComponentListenerSystem implements EntityListene
 		}
 	}
 
-	private final Map<Integer, List<Integer>> entityToComponents;
 	private final Map<Integer, String> entityToFile;
 	private final Map<String, List<Integer>> fileToEntities;
 	private final String staging = "staging";
@@ -46,16 +47,30 @@ public class SaveSystem extends ComponentListenerSystem implements EntityListene
 	@SuppressWarnings("unchecked")
 	@Inject
 	protected SaveSystem(ComponentSystem componentSystem, EntitySystem entitySystem, AssetSystem assetSystem) {
-		super(componentSystem, ListenerHelper.createConfiguration(Component.class), true, 10);
+		super();
 		entitySystem.addEntityListener(this);
 		this.assetSystem = assetSystem;
 		this.componentSystem = componentSystem;
 		this.entitySystem = entitySystem;
-		entityToComponents = new HashMap<Integer, List<Integer>>();
 		entityToFile = new HashMap<Integer, String>();
 		fileToEntities = new HashMap<String, List<Integer>>();
 		objectMapper = new ObjectMapper();
 		ObjectMapperConfigurator.configure(objectMapper);
+	}
+
+	public String getEntityAsString(Entity ent) throws JsonProcessingException {
+		Entity parent = ent.getParent();
+		SaveEntity fakeEntity = new SaveEntity(ent.getName(), parent == null ? null : parent.getName());
+		List<Component> components = ent.getComponents(Component.class);
+		if (components != null) {
+			fakeEntity.components = new Component[components.size()];
+			int i = 0;
+			for (Component component : components) {
+				fakeEntity.components[i] = component;
+				i++;
+			}
+		}
+		return objectMapper.writeValueAsString(fakeEntity);
 	}
 
 	public String getScene(List<Integer> entities) {
@@ -66,15 +81,15 @@ public class SaveSystem extends ComponentListenerSystem implements EntityListene
 			Entity parent = ent.getParent();
 			SaveEntity fakeEntity = new SaveEntity(ent.getName(), parent == null ? null : parent.getName());
 			scene.add(fakeEntity);
-			List<Integer> components = entityToComponents.get(entity);
+			List<Component> components = ent.getComponents(Component.class);
 			if (components == null) {
 				continue;
 			}
 			fakeEntity.components = new Component[components.size()];
-			for (int i = 0; i < components.size(); i++) {
-				int componentId = components.get(i);
-				Component component = componentSystem.get(ent, componentId);
+			int i = 0;
+			for (Component component : components) {
 				fakeEntity.components[i] = component;
+				i++;
 			}
 		}
 		String data = "";
@@ -114,15 +129,7 @@ public class SaveSystem extends ComponentListenerSystem implements EntityListene
 					Class<? extends Component> cls = (Class<? extends Component>) Class
 							.forName(component.get(0).asText());
 					Component comp = ent.createComponent(cls);
-					log.debug(objectMapper.writeValueAsString(comp));
 					objectMapper.readerForUpdating(comp).readValue(component.get(1));
-					log.debug(component.get(1));
-					if (true) {
-						return;
-					}
-					// log.debug(component);
-					objectMapper.readerForUpdating(comp).readValue(component);
-					log.debug(comp);
 					componentSystem.notifyFrom("load", comp);
 				}
 			}
@@ -138,18 +145,6 @@ public class SaveSystem extends ComponentListenerSystem implements EntityListene
 			// objectMapper.readValue(fileContents, SaveData.class);
 		} catch (Throwable t) {
 			log.fatal("Save System load", t);
-		}
-	}
-
-	@Override
-	public <T extends Component> void onChange(ComponentChangeType change, T arg1) {
-		switch (change) {
-		case ADD:
-			addComponent(componentSystem.getOwner(arg1.getId()).getId(), arg1.getId());
-			break;
-		case DELETE:
-			removeComponent(componentSystem.getOwner(arg1.getId()).getId(), arg1.getId());
-			break;
 		}
 	}
 
@@ -181,15 +176,6 @@ public class SaveSystem extends ComponentListenerSystem implements EntityListene
 		file.writeString(getScene(entities), false);
 	}
 
-	private void addComponent(int parent, int id) {
-		List<Integer> objects = entityToComponents.get(parent);
-		if (objects == null) {
-			objects = new ArrayList<Integer>();
-			entityToComponents.put(parent, objects);
-		}
-		objects.add(id);
-	}
-
 	private void addEntity(int id) {
 		List<Integer> objects = fileToEntities.get(staging);
 		if (objects == null) {
@@ -200,23 +186,10 @@ public class SaveSystem extends ComponentListenerSystem implements EntityListene
 		objects.add(id);
 	}
 
-	private void removeComponent(int parent, Integer id) {
-		List<Integer> objects = entityToComponents.get(parent);
-		if (objects == null) {
-			return;
-		}
-		objects.remove(id);
-	}
-
 	private void removeEntities(List<Integer> entities) {
 		for (int entity : entities) {
 			Entity ent = entitySystem.get(entity);
 			entitySystem.delete(ent);
-			List<Integer> components = new ArrayList<>(entityToComponents.get(entity));
-			for (int component : components) {
-				Component comp = componentSystem.get(ent, component);
-				componentSystem.remove(ent, comp.getId());
-			}
 		}
 	}
 

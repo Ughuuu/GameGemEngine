@@ -20,6 +20,24 @@ import com.gemengine.system.listener.ComponentTrackerListener;
 import lombok.val;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Convenience System that tracks a component type being parented to another
+ * type of component.
+ * 
+ * You can also listen to these events by registering as a listener for this
+ * system.
+ * 
+ * Ex: Component Tracked is of type Ta and Component Tracking is of type Tb.
+ * 
+ * Entity A has component of type Ta and entity B has component of type Tb, and
+ * A is parent of B, then you will receive notifications for this. You will also
+ * receive notifications in case of a change of A or B or their components.
+ * 
+ * @author Dragos
+ *
+ * @param <ComponentTracked>
+ * @param <ComponentTracking>
+ */
 @Log4j2
 public abstract class ComponentTrackerSystem<ComponentTracked extends Component, ComponentTracking extends Component>
 		extends ComponentListenerSystem implements EntityListener {
@@ -46,6 +64,13 @@ public abstract class ComponentTrackerSystem<ComponentTracked extends Component,
 		Collections.sort(listeners, PriorityListener.getComparator());
 	}
 
+	/**
+	 * Get the component that is tracked from the tracker component, located in
+	 * the given entity
+	 * 
+	 * @param ent
+	 * @return
+	 */
 	public ComponentTracked getTrackedComponentUp(Entity ent) {
 		return entityToTrackedComponent.get(ent.getId());
 	}
@@ -118,9 +143,9 @@ public abstract class ComponentTrackerSystem<ComponentTracked extends Component,
 	private void removeComponent(Entity tracked) {
 		Set<Entity> trackees = null;
 		if (trackAllSubcomponents) {
-			tracked.getDescendantsOf(componentTrackingType);
+			trackees = tracked.getDescendantsOf(componentTrackingType);
 		} else {
-			tracked.getFirstDescendantsOf(componentTrackingType);
+			trackees = tracked.getFirstDescendantsOf(componentTrackingType);
 		}
 		if (trackees == null) {
 			return;
