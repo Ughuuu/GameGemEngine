@@ -12,18 +12,18 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gemengine.component.Component;
-import com.gemengine.component.LabelComponent;
-import com.gemengine.component.PointComponent;
-import com.gemengine.component.base.DrawableComponent;
-import com.gemengine.component.base.InputScriptComponent;
-import com.gemengine.component.base.ScriptComponent;
 import com.gemengine.component.ui.UIContainerComponent;
 import com.gemengine.component.ui.UITextAreaComponent;
+import com.gemengine.component.base.DrawableComponent;
+import com.gemengine.component.base.InputScriptComponent;
+import com.gemengine.component.base.PointComponent;
+import com.gemengine.component.base.ScriptComponent;
+import com.gemengine.component.twod.LabelComponent;
 import com.gemengine.entity.Entity;
 import com.gemengine.listener.EntityListener;
 import com.gemengine.system.ComponentSystem;
 import com.gemengine.system.EntitySystem;
-import com.gemengine.system.SaveSystem;
+import com.gemengine.system.base.SaveSystem;
 import com.gemengine.system.manager.SystemManager;
 import com.google.inject.Inject;
 
@@ -46,6 +46,17 @@ public class ShowScript extends InputScriptComponent implements EntityListener {
 		this.saveSystem = saveSystem;
 	}
 
+	protected UITextAreaComponent createUITextArea(String name, String stageName) {
+		Entity textArea = createEntity(name);
+		UITextAreaComponent textAreaComponent = textArea.createComponent(UITextAreaComponent.class).setText(name);
+		Entity container = createEntity("container_" + name);
+		Entity stageEntity = findEntity(stageName);
+		stageEntity.addChild(container);
+		container.addChild(textArea);
+		container.createComponent(UIContainerComponent.class).setAlign(Align.center);
+		return textAreaComponent;
+	}
+	
 	@Override
 	public void onInit() {
 		// createUILabel("test123", "stage");

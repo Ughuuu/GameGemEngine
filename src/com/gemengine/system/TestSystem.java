@@ -8,16 +8,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.gemengine.component.CameraComponent;
-import com.gemengine.component.CameraComponent.ViewportType;
-import com.gemengine.component.DebugComponent;
-import com.gemengine.component.PointComponent;
-import com.gemengine.component.SpriteAtlasComponent;
-import com.gemengine.component.SpriteComponent;
 import com.gemengine.component.ui.UIContainerComponent;
 import com.gemengine.component.ui.UILabelComponent;
 import com.gemengine.component.ui.UIStageComponent;
+import com.gemengine.component.base.DebugComponent;
+import com.gemengine.component.base.PointComponent;
+import com.gemengine.component.twod.CameraComponent;
+import com.gemengine.component.twod.SpriteAtlasComponent;
+import com.gemengine.component.twod.SpriteComponent;
+import com.gemengine.component.twod.CameraComponent.ViewportType;
 import com.gemengine.entity.Entity;
+import com.gemengine.system.base.SaveSystem;
+import com.gemengine.system.base.ScriptSystem;
 import com.gemengine.system.base.SystemBase;
 import com.gemengine.system.base.TimedSystem;
 import com.google.inject.Inject;
@@ -85,13 +87,13 @@ public class TestSystem extends TimedSystem {
 		val cam = entitySystem.get("camera");
 		int count = 0;
 		for (int j = 0; j < 10; j++) {
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 1; i++) {
 				Entity gem = entitySystem.create("E" + count++);
 				gem.createComponent(PointComponent.class).setRelativePosition(new Vector3(i * 20, j * 20, 0)).setRelativeScale(0.2f);
 				gem.createComponent(SpriteAtlasComponent.class).setName("lipsy").setFrame(0)
 						.setTexturePath("assets/atlas/lipsyBoss.atlas");
 				gem.createComponent(AutoScript.class);
-				gem.createComponent(OverlayScript.class);
+				//gem.createComponent(OverlayScript.class);
 				cam.addChild(gem);
 			}
 		}
@@ -152,19 +154,17 @@ public class TestSystem extends TimedSystem {
 
 	void doTest() {
 		try {
-			doFunctionalityTests();
-			log.debug("Test Passed");
+			//doFunctionalityTests();
 		} catch (Exception e) {
-			log.debug("Test Failed");
 		}
-		// activateDebug();
-		//createCamera("camera");
-		//createCamera("uiCamera");
-		//createStage();
+		//activateDebug();
+		createCamera("camera");
+		createCamera("uiCamera");
+		createStage();
 		//createShower();
-		// createButtons();
-		// createSpriteTest();
-		//createMultiple();
+		createButtons();
+		createSpriteTest();
+		createMultiple();
 		// createLabelTest();
 		// doSaveTest();
 	}

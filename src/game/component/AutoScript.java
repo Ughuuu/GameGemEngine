@@ -2,14 +2,14 @@ package game.component;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import com.gemengine.component.PointComponent;
-import com.gemengine.component.SpriteAtlasComponent;
+import com.gemengine.component.base.PointComponent;
 import com.gemengine.component.base.ScriptComponent;
+import com.gemengine.component.twod.SpriteAtlasComponent;
 import com.gemengine.entity.Entity;
-import com.gemengine.system.CameraSystem;
-import com.gemengine.system.CameraTrackerSystem;
 import com.gemengine.system.ComponentSystem;
 import com.gemengine.system.EntitySystem;
+import com.gemengine.system.twod.CameraSystem;
+import com.gemengine.system.twod.CameraTrackerSystem;
 import com.google.inject.Inject;
 
 import lombok.extern.log4j.Log4j2;
@@ -36,8 +36,8 @@ public class AutoScript extends ScriptComponent {
 		pos = owner.getComponent(PointComponent.class).getRelativePosition();
 		sprite = owner.getComponent(SpriteAtlasComponent.class);
 		dir = new Vector3();
-		dir.x = 1;
-		//dir.y = 1;
+		dir.x = (float) (Math.random() - 0.5);
+		dir.y = (float) (Math.random() - 0.5);
 	}
 
 	@Override

@@ -2,7 +2,7 @@ package game.component;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import com.gemengine.component.PointComponent;
+import com.gemengine.component.base.PointComponent;
 import com.gemengine.component.base.ScriptComponent;
 import com.gemengine.entity.Entity;
 import com.gemengine.system.ComponentSystem;
@@ -23,7 +23,7 @@ public class ClickScript extends ScriptComponent {
 		Entity owner = getOwner();
 		Vector3 pos = owner.getComponent(PointComponent.class).getRelativePosition();
 		Vector3 dir = new Vector3();
-		dir.x = Gdx.input.getX() * 2;
+		dir.x = Gdx.input.getX();
 		dir.y = (Gdx.graphics.getHeight() - Gdx.input.getY());
 		//dir.scl(delta * 5);
 		pos.set(dir);

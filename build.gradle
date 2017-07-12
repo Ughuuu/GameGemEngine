@@ -9,14 +9,18 @@ buildDir='build'
 
 ext {
 	gemEngineVersion = '8a255587fc'
-	gemEngineBasePackVersion = 'e2a5c5b405'
+	gemEngineBasePackVersion = 'cc50a2a857'
+	gemEngine2dPackVersion = '4c3dbdc081'
+	gemEngineUIPackVersion = '5ac326e754'
      lombokVersion = "1.16.16"
     }
 
     dependencies {
     	compileOnly "com.github.Ughuuu:GemMaker:$gemEngineVersion"
     	compileOnly "org.projectlombok:lombok:$lombokVersion"
-    	//compile "com.github.Ughuuu:GemEngineBasePack:$gemEngineBasePackVersion"
+    	compile "com.github.Ughuuu:GemEngineBasePack:$gemEngineBasePackVersion"
+    	compile "com.github.Ughuuu:GemEngine2dPack:$gemEngine2dPackVersion"
+    	compile "com.github.Ughuuu:GemEngineUIPack:$gemEngineUIPackVersion"
     }
 
 task deleteLib(type: Delete){
